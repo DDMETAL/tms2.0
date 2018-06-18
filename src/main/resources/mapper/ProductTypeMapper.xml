@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- classpath:mapper/ProjectMapper.xml -->
+<mapper namespace="com.dmetal.tms.product.dao.ProductTypeDAO"> 
+	<!-- select
+			c.*,(select p.name from tms_product_types p where p.id = c.parentId) as parentName 
+		from
+			tms_product_types c -->
+	<select id="findObjects" resultType="map">
+		SELECT c.*,p.name parentName
+		FROM tms_product_types c left join tms_product_types p
+		ON c.parentId=p.id
+	</select>
+	
+	<insert id="insertObject" parameterType="com.dmetal.tms.product.entity.ProductType">
+		INSERT INTO tms_product_types(name,sort,parentId,note,createdUser,modifiedUser,createdTime,modifiedTime)
+		VALUES(#{name},#{sort},#{parentId},#{note},#{createdUser},#{modifiedUser},NOW(),NOW())
+	</insert>
+	
+	<select id="findTreeNodes" resultType="map">
+		SELECT id,name,parentId
+		FROM tms_product_types;
+	</select>
+	
+	<update id="updateObject" parameterType="com.dmetal.tms.product.entity.ProductType">
+		UPDATE tms_product_types
+		SET name=#{name},parentId=#{parentId},sort=#{sort},note=#{note},modifiedUser=#{modifiedUser},modifiedTime=NOW()
+		WHERE id=#{id}
+	</update>
+	
+	<!-- 根据id查找某个对象 -->
+	<select id="findObjectById" parameterType="java.lang.Integer" resultType="map">
+		SELECT p.*,t.name parentName FROM tms_product_types p join tms_product_types t
+		ON p.parentId=t.id
+		WHERE p.id=#{id}
+	</select>
+	<!-- 判断当前id下有无子对象 -->
+	<select id="hasChilds" resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM tms_product_types
+		WHERE parentId=#{id}
+	</select>
+	<delete id="deleteObject" parameterType="java.lang.Integer">
+		DELETE FROM tms_product_types
+		WHERE id=#{id}
+	</delete>
+</mapper>

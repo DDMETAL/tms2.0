@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- classpath:mapper/ProjectMapper.xml -->
+<mapper namespace="com.dmetal.tms.attachement.dao.AttachementDAO"> 
+
+	<select id="findObjects" resultType="com.dmetal.tms.attachement.entity.Attachement">
+		SELECT * FROM tms_attachements
+		order by createdTime desc
+	</select>
+	<select id="findObjectByDisgest" resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM tms_attachements
+		WHERE fileDisgest=#{fileDisgest}
+	</select>
+	<select id="findObjectById" resultType="com.dmetal.tms.attachement.entity.Attachement">
+		SELECT * FROM tms_attachements
+		WHERE id=#{id}
+	</select>
+	<insert id="insertObject" parameterType="com.dmetal.tms.attachement.entity.Attachement">
+		INSERT INTO tms_attachements
+		(title,fileName,contentType,filePath,fileDisgest,athBelong,belongId,createdUser,createdTime,modifiedUser,modifiedTime)
+		VALUES(#{title},#{fileName},#{contentType},#{filePath},#{fileDisgest},#{athBelong},#{belongId},#{createdUser},NOW(),#{modifiedUser},NOW())
+	</insert>
+</mapper>
